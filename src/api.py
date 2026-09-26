@@ -3,6 +3,8 @@ from pydantic import BaseModel
 import pandas as pd
 import mlflow
 import mlflow.sklearn
+import psycopg2
+
 
 
 app = FastAPI(title="Car Price Prediction API")
@@ -28,7 +30,42 @@ def home():
 def predict(car:Car):
     data=pd.DataFrame([car.model_dump()])
     prediction = model.predict(data)[0]
-
+    conn = psycopg2.connect(
+        host="host.docker.internal",
+        port=5432,
+        database="car_prices",
+        user="postgres",
+        password="postgres",
+    )
+    cursor=conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO predictions (
+            brand,
+            model,
+            year,
+            km_driven,
+            transmission,
+            owner,
+            fuel_type,
+            predicted_price
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            car.Brand,
+            car.model,
+            car.Year,
+            car.kmDriven,
+            car.Transmission,
+            car.Owner,
+            car.FuelType,
+            float(prediction),
+        ),
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
     return {
         "predicted_price": float(prediction)
     }
