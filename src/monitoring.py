@@ -1,12 +1,14 @@
-import psycopg2
 import pandas as pd
-from data import load_and_prepare_data
+import psycopg2
 from evidently import Report
 from evidently.presets import DataDriftPreset
-from pipeline import training_pipeline
+from prefect.deployments import run_deployment
+
+from data import load_and_prepare_data
+
 
 def load_reference_data():
-    X_train, X_test, y_train, y_test = load_and_prepare_data()
+    _, X_test, _, _ = load_and_prepare_data()
     return X_test
 def load_predictions():
     conn=psycopg2.connect(
@@ -93,7 +95,11 @@ def check_drift(result):
 
 def trigger_retraining():
     print("\n🚨 Triggering model retraining...")
-    training_pipeline()
+    run_deployment(
+        name="training-pipeline/car-price-training",
+         
+        timeout=0,
+    )
     print("✅ Retraining completed.")
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+.venv
+.venv-1
+__pycache__
+*.pyc
+.git
+.github
+.pytest_cache
+.mypy_cache
+.ruff_cache
+monitoring_report.html
+mlartifacts
+mlruns
+*.ipynb_checkpoints

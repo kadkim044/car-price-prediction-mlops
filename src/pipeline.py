@@ -1,8 +1,10 @@
-from prefect import flow,task
+import mlflow
+from prefect import flow, task
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
 from data import load_and_prepare_data
 from train import create_model
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import mlflow
+
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment("car-price-prediction")
 

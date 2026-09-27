@@ -1,11 +1,9 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-import pandas as pd
 import mlflow
 import mlflow.sklearn
+import pandas as pd
 import psycopg2
-
-
+from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI(title="Car Price Prediction API")
 
